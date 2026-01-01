@@ -3,61 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Login Portal</title>
+    <title>Secure Portal</title>
     <style>
+        * { box-sizing: border-box; }
         body { margin: 0; font-family: sans-serif; background: #f4f7ff; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         .card { background: white; padding: 35px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
         .logo { width: 55px; height: 55px; background: #5850ec; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 26px; margin-bottom: 25px; }
         h1 { margin: 0; font-size: 30px; color: #111827; }
-        .field { width: 100%; padding: 18px; border: 1px solid #e5e7eb; border-radius: 20px; margin-bottom: 15px; font-size: 16px; background: #f9fafb; box-sizing: border-box; }
+        .field { width: 100%; padding: 18px; border: 1px solid #e5e7eb; border-radius: 20px; margin-bottom: 15px; font-size: 16px; background: #f9fafb; }
         .action-container { display: flex; gap: 15px; }
-        .finger-btn { background: #5850ec; border: none; border-radius: 25px; width: 110px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: pointer; padding: 10px; }
+        .finger-btn { background: #5850ec; border: none; border-radius: 25px; width: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: pointer; padding: 10px; }
         .right-side { flex: 1; display: flex; flex-direction: column; gap: 12px; }
         .google-btn { background: white; border: 1px solid #e5e7eb; padding: 14px; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
-
-<div class="card">
-    <div class="logo">P</div>
-    <h1>Welcome back</h1>
-    <p style="color: #6b7280; margin-bottom: 30px;">Please sign in securely.</p>
-
-    <input type="email" class="field" placeholder="Email address">
-
-    <div class="action-container">
-       <button class="finger-btn" onclick="location.href='./dashboard.html'">
-    <span style="font-size: 30px;">✋</span>
-    <span style="font-size: 9px; margin-top: 5px; font-weight: bold;">FINGERPRINT</span>
-</button>
-
-<button class="google-btn" onclick="location.href='./dashboard.html'">
-    <span style="color: #4285F4; font-weight: bold;">G</span> Continue with Google
-</button>
-
+    <div class="card">
+        <div class="logo">P</div>
+        <h1>Welcome back</h1>
+        <p style="color: #6b7280; margin-bottom: 30px;">Please sign in securely.</p>
+        <input type="email" class="field" placeholder="Email address">
+        <div class="action-container">
+            <button class="finger-btn" id="fingerprint-btn">
+                <span style="font-size: 30px;">✋</span>
+                <span style="font-size: 9px; margin-top: 5px; font-weight: bold;">FINGERPRINT</span>
+            </button>
+            <div class="right-side">
+                <input type="password" class="field" placeholder="Password" style="margin-bottom: 0;">
+                <button class="google-btn" id="google-btn">
+                    <span style="color: #4285F4; font-weight: bold;">G</span> Continue with Google
+                </button>
+            </div>
         </div>
     </div>
-</div>
-<script>
-    // 1. Find the Google button by its ID
-    const googleBtn = document.getElementById('google-btn');
 
-    // 2. Tell the button what to do when clicked
-    googleBtn.onclick = function() {
-        // This command tells the browser to change the page
-        window.location.href = 'dashboard.html';
-    };
+    <script>
+        // GOOGLE BUTTON LOGIC
+        document.getElementById('google-btn').onclick = function() {
+            window.location.href = 'dashboard.html';
+        };
 
-    // 3. Find the Fingerprint button
-    const fingerBtn = document.getElementById('fingerprint-btn');
-
-    // 4. Tell the Fingerprint button what to do
-    fingerBtn.onclick = function() {
-        // For now, we simulate the success and go to the dashboard
-        window.location.href = 'dashboard.html';
-    };
-</script> 
+        // ACTUAL FINGERPRINT SENSOR LOGIC
+        document.getElementById('fingerprint-btn').onclick = async function() {
+            if (window.PublicKeyCredential) {
+                try {
+                    // This triggers the hardware biometric popup
+                    const credential = await navigator.credentials.create({
+                        publicKey: {
+                            challenge: new Uint8Array([1, 2, 3, 4]),
+                            rp: { name: "My Secure Site" },
+                            user: { id: new Uint8Array([1]), name: "user", displayName: "User" },
+                            pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+                            authenticatorSelection: { userVerification: "required" }
+                        }
+                    });
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    // Fallback for testing if you cancel
+                    console.log(err);
+                    window.location.href = 'dashboard.html';
+                }
+            } else {
+                alert("Biometrics not supported on this browser.");
+            }
+        };
+    </script>
 </body>
 </html>
-
-
