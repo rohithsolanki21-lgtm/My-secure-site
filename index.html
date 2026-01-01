@@ -3,77 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Portal</title>
+    <title>My Secure Site - Login</title>
     <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: sans-serif; background: #f4f7ff; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .card { background: white; padding: 35px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
-        .logo { width: 55px; height: 55px; background: #5850ec; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 26px; margin-bottom: 25px; }
-        h1 { margin: 0; font-size: 30px; color: #111827; }
-        .field { width: 100%; padding: 18px; border: 1px solid #e5e7eb; border-radius: 20px; margin-bottom: 15px; font-size: 16px; background: #f9fafb; }
-        .action-container { display: flex; gap: 15px; }
-        .finger-btn { background: #5850ec; border: none; border-radius: 25px; width: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: pointer; padding: 10px; }
-        .right-side { flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .google-btn { background: white; border: 1px solid #e5e7eb; padding: 14px; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; }
+        body { background: #1a1a2e; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: #16213e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 300px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        #auth-btn { background: #e94560; color: white; }
+        #fingerprint-btn { background: #0f3460; color: white; font-size: 12px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="logo">P</div>
-        <h1>Welcome back</h1>
-        <p style="color: #6b7280; margin-bottom: 30px;">Please sign in securely.</p>
-        <input type="email" class="field" placeholder="Email address">
-        <div class="action-container">
-            <button class="finger-btn" id="fingerprint-btn">
-                <span style="font-size: 30px;">✋</span>
-                <span style="font-size: 9px; margin-top: 5px; font-weight: bold;">FINGERPRINT</span>
-            </button>
-            <div class="right-side">
-                <input type="password" class="field" placeholder="Password" style="margin-bottom: 0;">
-                <button class="google-btn" id="google-btn">
-                    <span style="color: #4285F4; font-weight: bold;">G</span> Continue with Google
-                </button>
-            </div>
-        </div>
-    </div>
+
+<div class="login-card">
+    <h2>Secure Login</h2>
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+    
+    <button id="auth-btn">Sign In / Sign Up</button>
+    <button id="fingerprint-btn">🖐 Use Fingerprint (Bypass)</button>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 <script>
-  // Corrected config from your screenshot
   const firebaseConfig = {
     apiKey: "AIzaSyBWMwNv1YHqxrDzgwK5OXUCP5j-oG9uY",
     authDomain: "my--site-b6140.firebaseapp.com",
-    projectId: "my--site-b6140",
-    storageBucket: "my--site-b6140.firebasestorage.app",
-    messagingSenderId: "220790058890",
-    appId: "1:220790058890:web:27fb070488bea0f94869c3"
+    projectId: "my--site-b6140"
   };
 
-  // Start Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-  const provider = new firebase.auth.GoogleAuthProvider();
 
-  // FINGERPRINT: Immediate hardware-like response
+  // LOGIN & SIGN UP LOGIC
+  document.getElementById('auth-btn').onclick = function() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (email.length < 5 || password.length < 6) {
+      alert("Please enter a valid email and a 6-character password.");
+      return;
+    }
+
+    // Try to Log In
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => { window.location.href = 'dashboard.html'; })
+      .catch((error) => {
+        // If account doesn't exist, Create it automatically
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+          auth.createUserWithEmailAndPassword(email, password)
+            .then(() => { 
+              alert("New Account Created!"); 
+              window.location.href = 'dashboard.html'; 
+            })
+            .catch((err) => alert("Error: " + err.message));
+        } else {
+          alert("Error: " + error.message);
+        }
+      });
+  };
+
+  // FINGERPRINT: Immediate Bypass
   document.getElementById('fingerprint-btn').onclick = function() {
-    if (navigator.vibrate) navigator.vibrate([60, 30, 60]);
+    if (navigator.vibrate) navigator.vibrate(60);
     window.location.href = 'dashboard.html';
   };
-
-  // GOOGLE: Professional Redirect
-  document.getElementById('google-btn').onclick = function() {
-    auth.signInWithRedirect(provider).catch(function(error) {
-        alert("Setup Error: Please ensure Google is 'Enabled' in Firebase console.");
-    });
-  };
-
-  // This handles the return from Google
-  auth.getRedirectResult().then(function(result) {
-    if (result && result.user) {
-      localStorage.setItem("username", result.user.displayName);
-      window.location.href = 'dashboard.html';
-    }
-  });
 </script>
 
 </body>
