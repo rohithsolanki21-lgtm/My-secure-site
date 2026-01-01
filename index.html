@@ -42,12 +42,15 @@
         document.getElementById('google-btn').onclick = function() {
             window.location.href = 'dashboard.html';
         };
-
-        // ACTUAL FINGERPRINT SENSOR LOGIC
+        // ACTUAL FINGERPRINT SENSOR LOGIC WITH VIBRATION
         document.getElementById('fingerprint-btn').onclick = async function() {
+            // 1. ADD THIS: Physical buzz when button is touched
+            if (navigator.vibrate) {
+                navigator.vibrate(60); 
+            }
+
             if (window.PublicKeyCredential) {
                 try {
-                    // This triggers the hardware biometric popup
                     const credential = await navigator.credentials.create({
                         publicKey: {
                             challenge: new Uint8Array([1, 2, 3, 4]),
@@ -57,16 +60,24 @@
                             authenticatorSelection: { userVerification: "required" }
                         }
                     });
+                    
+                    // 2. ADD THIS: Success double-buzz
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 30, 100]);
+                    }
                     window.location.href = 'dashboard.html';
                 } catch (err) {
-                    // Fallback for testing if you cancel
-                    console.log(err);
+                    // Fallback buzz if canceled
+                    if (navigator.vibrate) {
+                        navigator.vibrate(200);
+                    }
                     window.location.href = 'dashboard.html';
                 }
             } else {
-                alert("Biometrics not supported on this browser.");
+                alert("Biometrics not supported.");
             }
         };
     </script>
+
 </body>
 </html>
