@@ -36,11 +36,11 @@
             </div>
         </div>
     </div>
-<script type="module"> 
-    
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+<script>
+  // Corrected config from your screenshot
   const firebaseConfig = {
     apiKey: "AIzaSyBWMwNv1YHqxrDzgwK5OXUCP5j-oG9uY",
     authDomain: "my--site-b6140.firebaseapp.com",
@@ -50,26 +50,31 @@
     appId: "1:220790058890:web:27fb070488bea0f94869c3"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+  // Start Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const provider = new firebase.auth.GoogleAuthProvider();
 
-  // This will catch the error and tell us what's wrong
-  getRedirectResult(auth).catch((error) => {
-    alert("Firebase Error: " + error.code);
-  });
+  // FINGERPRINT: Immediate hardware-like response
+  document.getElementById('fingerprint-btn').onclick = function() {
+    if (navigator.vibrate) navigator.vibrate([60, 30, 60]);
+    window.location.href = 'dashboard.html';
+  };
 
-  document.getElementById('google-btn').onclick = () => {
-    signInWithRedirect(auth, provider).catch((error) => {
-        alert("Login Error: " + error.message);
+  // GOOGLE: Professional Redirect
+  document.getElementById('google-btn').onclick = function() {
+    auth.signInWithRedirect(provider).catch(function(error) {
+        alert("Setup Error: Please ensure Google is 'Enabled' in Firebase console.");
     });
   };
 
-  document.getElementById('fingerprint-btn').onclick = () => {
-    window.location.href = 'dashboard.html';
-  };
-    
+  // This handles the return from Google
+  auth.getRedirectResult().then(function(result) {
+    if (result && result.user) {
+      localStorage.setItem("username", result.user.displayName);
+      window.location.href = 'dashboard.html';
+    }
+  });
 </script>
-    
 </body>
 </html>
