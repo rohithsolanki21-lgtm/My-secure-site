@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Secure Dashboard</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, system-ui, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+        
+        /* Top Navigation Bar */
+        .navbar {
+            background: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .nav-logo { font-weight: 800; font-size: 20px; color: #5850ec; }
+
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* User Profile Card */
+        .profile-card {
+            background: linear-gradient(135deg, #5850ec 0%, #312e81 100%);
+            border-radius: 30px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(88, 80, 236, 0.2);
+        }
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        /* Stats Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; }
+        .stat-box p { margin: 10px 0 0 0; font-size: 24px; font-weight: bold; }
+
+        .logout-btn {
+            width: 100%;
+            margin-top: 30px;
+            padding: 18px;
+            border-radius: 20px;
+            border: none;
+            background: #fee2e2;
+            color: #ef4444;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">P.Portal</div>
+        <div style="font-size: 20px;">⚙️</div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="avatar">👤</div>
+            <h2 style="margin: 0;">Welcome back, User</h2>
+            <p style="opacity: 0.8; margin: 5px 0 0 0;">Security Level: Biometric Verified</p>
+        </div>
+
+        <div class="grid">
+            <div class="stat-box">
+                <h3>Logins</h3>
+                <p>12</p>
+            </div>
+            <div class="stat-box">
+                <h3>Uptime</h3>
+                <p>99%</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 30px;">Recent Activity</h3>
+        <div style="background: white; border-radius: 20px; padding: 5px; border: 1px solid #e2e8f0;">
+            <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between;">
+                <span>Fingerprint Login</span>
+                <span style="color: #64748b; font-size: 12px;">2 mins ago</span>
+            </div>
+            <div style="padding: 15px; display: flex; justify-content: space-between;">
+                <span>System Update</span>
+                <span style="color: #64748b; font-size: 12px;">Yesterday</span>
+            </div>
+        </div>
+
+        <button class="logout-btn" onclick="location.href='index.html'">Secure Logout</button>
+    </div>
+
+</body>
+</html>
